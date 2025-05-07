@@ -62,7 +62,8 @@ createApp({
             timeEntries.value.unshift({
                 task: newTask.value,
                 duration: elapsedTime.value,
-                date: new Date()
+                date: new Date(),
+                editing: false
             });
             
             // Save to localStorage
@@ -71,6 +72,39 @@ createApp({
             // Reset timer and task
             elapsedTime.value = 0;
             newTask.value = '';
+        }
+        
+        // Edit an entry
+        function editEntry(index) {
+            const entry = timeEntries.value[index];
+            const hours = Math.floor(entry.duration / 3600);
+            const minutes = Math.floor((entry.duration % 3600) / 60);
+            const seconds = entry.duration % 60;
+            
+            entry.editTask = entry.task;
+            entry.editHours = hours;
+            entry.editMinutes = minutes;
+            entry.editSeconds = seconds;
+            entry.editing = true;
+        }
+        
+        // Save edited entry
+        function saveEdit(index) {
+            const entry = timeEntries.value[index];
+            const hours = parseInt(entry.editHours || 0);
+            const minutes = parseInt(entry.editMinutes || 0);
+            const seconds = parseInt(entry.editSeconds || 0);
+            
+            entry.task = entry.editTask;
+            entry.duration = hours * 3600 + minutes * 60 + seconds;
+            entry.editing = false;
+            
+            saveEntries();
+        }
+        
+        // Cancel editing
+        function cancelEdit(index) {
+            timeEntries.value[index].editing = false;
         }
         
         // Delete an entry
@@ -123,6 +157,11 @@ createApp({
             }
         });
         
+        // Compute unique previous tasks
+        const uniquePreviousTasks = computed(() => {
+            return [...new Set(timeEntries.value.map(entry => entry.task))];
+        });
+
         return {
             elapsedTime,
             isRunning,
@@ -131,13 +170,16 @@ createApp({
             formattedTime,
             canAddEntry,
             totalTimeFormatted,
+            uniquePreviousTasks,
             startStop,
             reset,
             addEntry,
             deleteEntry,
+            editEntry,
+            saveEdit,
+            cancelEdit,
             formatDuration,
             formatDate
         };
     }
 }).mount('#app');
-

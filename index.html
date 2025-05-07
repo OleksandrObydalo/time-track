@@ -36,7 +36,12 @@
                 </div>
 
                 <div class="task-form">
-                    <input type="text" v-model="newTask" placeholder="What are you working on?" @keyup.enter="addEntry">
+                    <div class="task-input-container">
+                        <input type="text" v-model="newTask" placeholder="What are you working on?" @keyup.enter="addEntry" list="previous-tasks">
+                        <datalist id="previous-tasks">
+                            <option v-for="task in uniquePreviousTasks" :key="task" :value="task"></option>
+                        </datalist>
+                    </div>
                     <button @click="addEntry" :disabled="!canAddEntry">Save Entry</button>
                 </div>
             </div>
@@ -45,14 +50,33 @@
                 <h2>Time Entries</h2>
                 <div class="entries-list" v-if="timeEntries.length > 0">
                     <div v-for="(entry, index) in timeEntries" :key="index" class="entry-item">
-                        <div class="entry-details">
+                        <div class="entry-details" v-if="!entry.editing">
                             <div class="entry-task">{{ entry.task }}</div>
                             <div class="entry-time">{{ formatDuration(entry.duration) }}</div>
                         </div>
-                        <div class="entry-date">{{ formatDate(entry.date) }}</div>
-                        <button class="delete-btn" @click="deleteEntry(index)">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="entry-edit-form" v-else>
+                            <input type="text" v-model="entry.editTask" placeholder="Task name">
+                            <div class="time-edit">
+                                <input type="number" v-model="entry.editHours" min="0" placeholder="Hours">
+                                <input type="number" v-model="entry.editMinutes" min="0" max="59" placeholder="Minutes">
+                                <input type="number" v-model="entry.editSeconds" min="0" max="59" placeholder="Seconds">
+                            </div>
+                        </div>
+                        <div class="entry-date" v-if="!entry.editing">{{ formatDate(entry.date) }}</div>
+                        <div class="entry-actions">
+                            <button v-if="!entry.editing" class="edit-btn" @click="editEntry(index)">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button v-if="entry.editing" class="save-btn" @click="saveEdit(index)">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button v-if="entry.editing" class="cancel-btn" @click="cancelEdit(index)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="delete-btn" @click="deleteEntry(index)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="no-entries" v-else>

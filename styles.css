@@ -134,15 +134,20 @@ button:disabled {
     margin-top: 10px;
 }
 
-.task-form input {
+.task-input-container {
     flex: 1;
+    position: relative;
+}
+
+.task-input-container input {
+    width: 100%;
     padding: 12px 15px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 1rem;
 }
 
-.task-form input:focus {
+.task-input-container input:focus {
     outline: none;
     border-color: var(--primary-color);
 }
@@ -192,7 +197,7 @@ h2 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.entry-details {
+.entry-details, .entry-edit-form {
     flex: 1;
 }
 
@@ -213,11 +218,48 @@ h2 {
     margin-right: 15px;
 }
 
-.delete-btn {
+.entry-edit-form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.time-edit {
+    display: flex;
+    gap: 10px;
+}
+
+.time-edit input {
+    width: 70px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.entry-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.edit-btn, .save-btn, .cancel-btn, .delete-btn {
     background-color: transparent;
     color: var(--light-text);
     padding: 8px;
     transition: all 0.2s;
+}
+
+.edit-btn:hover {
+    color: var(--primary-color);
+}
+
+.save-btn:hover {
+    color: var(--success-color);
+}
+
+.cancel-btn:hover {
+    color: var(--danger-color);
 }
 
 .delete-btn:hover {
@@ -290,4 +332,3 @@ footer {
         width: 100%;
     }
 }
-
