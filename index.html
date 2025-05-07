@@ -1,0 +1,80 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1><i class="fas fa-clock"></i> TimeTrack</h1>
+            <p>Track your time, boost your productivity</p>
+        </header>
+        
+        <main>
+            <div class="timer-container">
+                <div class="timer" :class="{ active: isRunning }">
+                    <div class="time">{{ formattedTime }}</div>
+                    <div class="timer-controls">
+                        <button @click="startStop" :class="{ 'btn-stop': isRunning, 'btn-start': !isRunning }">
+                            <i :class="isRunning ? 'fas fa-stop' : 'fas fa-play'"></i>
+                            {{ isRunning ? 'Stop' : 'Start' }}
+                        </button>
+                        <button @click="reset" class="btn-reset" :disabled="isRunning || elapsedTime === 0">
+                            <i class="fas fa-redo-alt"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="task-form">
+                    <input type="text" v-model="newTask" placeholder="What are you working on?" @keyup.enter="addEntry">
+                    <button @click="addEntry" :disabled="!canAddEntry">Save Entry</button>
+                </div>
+            </div>
+
+            <div class="entries-section">
+                <h2>Time Entries</h2>
+                <div class="entries-list" v-if="timeEntries.length > 0">
+                    <div v-for="(entry, index) in timeEntries" :key="index" class="entry-item">
+                        <div class="entry-details">
+                            <div class="entry-task">{{ entry.task }}</div>
+                            <div class="entry-time">{{ formatDuration(entry.duration) }}</div>
+                        </div>
+                        <div class="entry-date">{{ formatDate(entry.date) }}</div>
+                        <button class="delete-btn" @click="deleteEntry(index)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="no-entries" v-else>
+                    <i class="fas fa-hourglass-empty"></i>
+                    <p>No time entries yet. Start tracking your time!</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{ totalTimeFormatted }}</div>
+                    <div class="stat-label">Total Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ timeEntries.length }}</div>
+                    <div class="stat-label">Activities</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
