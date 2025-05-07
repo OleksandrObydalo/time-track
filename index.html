@@ -97,6 +97,19 @@
                     <div class="stat-label">Activities</div>
                 </div>
             </div>
+            
+            <div class="task-summaries" v-if="taskSummaries.length > 0">
+                <h2>Task Summaries</h2>
+                <div class="task-summary-list">
+                    <div v-for="summary in taskSummaries" :key="summary.task" class="task-summary-item">
+                        <div class="task-summary-details">
+                            <div class="task-summary-name">{{ summary.task }}</div>
+                            <div class="task-summary-time">{{ formatTaskDuration(summary.totalTime) }}</div>
+                        </div>
+                        <div class="task-summary-count">{{ summary.count }} entries</div>
+                    </div>
+                </div>
+            </div>
         </footer>
     </div>
     <script type="module" src="app.js"></script>

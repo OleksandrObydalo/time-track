@@ -162,6 +162,43 @@ createApp({
             return [...new Set(timeEntries.value.map(entry => entry.task))];
         });
 
+        // Calculate task summaries
+        const taskSummaries = computed(() => {
+            const summaries = {};
+            timeEntries.value.forEach(entry => {
+                if (!summaries[entry.task]) {
+                    summaries[entry.task] = {
+                        totalTime: entry.duration,
+                        count: 1
+                    };
+                } else {
+                    summaries[entry.task].totalTime += entry.duration;
+                    summaries[entry.task].count++;
+                }
+            });
+            
+            // Convert to array and sort by total time descending
+            return Object.entries(summaries)
+                .map(([task, summary]) => ({
+                    task, 
+                    totalTime: summary.totalTime, 
+                    count: summary.count
+                }))
+                .sort((a, b) => b.totalTime - a.totalTime);
+        });
+
+        // Format duration for task summaries
+        function formatTaskDuration(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            
+            if (hours > 0) {
+                return `${hours}h ${minutes}m`;
+            } else {
+                return `${minutes}m`;
+            }
+        }
+
         return {
             elapsedTime,
             isRunning,
@@ -171,6 +208,8 @@ createApp({
             canAddEntry,
             totalTimeFormatted,
             uniquePreviousTasks,
+            taskSummaries,
+            formatTaskDuration,
             startStop,
             reset,
             addEntry,
