@@ -6,20 +6,22 @@
 }
 
 :root {
-    --primary-color: #5e72e4;
-    --primary-dark: #4a5bd4;
-    --secondary-color: #f7fafc;
-    --text-color: #525f7f;
-    --light-text: #8898aa;
-    --danger-color: #f5365c;
-    --success-color: #2dce89;
-    --border-color: #e9ecef;
-    --timer-bg: #fff;
-    --box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    --primary-color: #8b5cf6;
+    --primary-dark: #7c3aed;
+    --primary-light: #a78bfa;
+    --secondary-color: #1f2937;
+    --bg-color: #111827;
+    --text-color: #f3f4f6;
+    --light-text: #9ca3af;
+    --danger-color: #ef4444;
+    --success-color: #10b981;
+    --border-color: #374151;
+    --timer-bg: #1f2937;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 body {
-    background-color: var(--secondary-color);
+    background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.5;
 }
@@ -36,19 +38,25 @@ header {
     padding: 20px 0;
 }
 
-header h1 {
-    color: var(--primary-color);
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-header p {
-    color: var(--light-text);
-    font-size: 1.1rem;
+.logo {
+    height: 40px;
+    width: 40px;
+}
+
+header h1 {
+    color: var(--text-color);
+    font-size: 2rem;
 }
 
 .timer-container {
-    background-color: white;
+    background-color: var(--secondary-color);
     border-radius: 10px;
     box-shadow: var(--box-shadow);
     padding: 25px;
@@ -57,7 +65,7 @@ header p {
 
 .timer {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     padding: 20px;
     background-color: var(--timer-bg);
@@ -66,15 +74,22 @@ header p {
     transition: all 0.3s ease;
 }
 
-.timer.active {
-    border: 2px solid var(--success-color);
-    box-shadow: 0 0 15px rgba(45, 206, 137, 0.2);
+.timer-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.timer-labels {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--light-text);
 }
 
 .time {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: bold;
-    margin-bottom: 20px;
     color: var(--text-color);
 }
 
@@ -94,6 +109,8 @@ button {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
 }
 
 button:disabled {
@@ -102,40 +119,52 @@ button:disabled {
 }
 
 .btn-start {
-    background-color: var(--success-color);
+    background-color: var(--primary-color);
     color: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    padding: 0;
 }
 
 .btn-start:hover:not(:disabled) {
-    background-color: #25b67a;
+    background-color: var(--primary-dark);
 }
 
 .btn-stop {
     background-color: var(--danger-color);
     color: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    padding: 0;
 }
 
 .btn-stop:hover:not(:disabled) {
-    background-color: #e62e54;
+    background-color: #dc2626;
 }
 
 .btn-reset {
-    background-color: var(--light-text);
-    color: white;
+    background-color: var(--secondary-color);
+    color: var(--light-text);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    padding: 0;
 }
 
 .btn-reset:hover:not(:disabled) {
-    background-color: #7a8899;
+    background-color: #374151;
 }
 
 .task-form {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .task-input-container {
-    flex: 1;
     position: relative;
 }
 
@@ -145,6 +174,8 @@ button:disabled {
     border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 1rem;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
 }
 
 .task-input-container input:focus {
@@ -152,17 +183,36 @@ button:disabled {
     border-color: var(--primary-color);
 }
 
-.task-form button {
-    background-color: var(--primary-color);
-    color: white;
+.task-options {
+    display: flex;
+    gap: 10px;
 }
 
-.task-form button:hover:not(:disabled) {
+.tag-btn, .edit-time-btn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--light-text);
+    padding: 8px 15px;
+    font-size: 0.9rem;
+}
+
+.tag-btn:hover, .edit-time-btn:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--primary-light);
+}
+
+.save-entry-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+}
+
+.save-entry-btn:hover:not(:disabled) {
     background-color: var(--primary-dark);
 }
 
 .entries-section {
-    background-color: white;
+    background-color: var(--secondary-color);
     border-radius: 10px;
     box-shadow: var(--box-shadow);
     padding: 25px;
@@ -224,6 +274,8 @@ h2 {
     margin-bottom: 8px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
 }
 
 .time-edit {
@@ -236,6 +288,8 @@ h2 {
     padding: 8px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
 }
 
 .entry-actions {
@@ -291,7 +345,7 @@ footer {
 .stat-item {
     text-align: center;
     padding: 15px 30px;
-    background-color: white;
+    background-color: var(--secondary-color);
     border-radius: 8px;
     box-shadow: var(--box-shadow);
     min-width: 150px;
@@ -300,7 +354,7 @@ footer {
 .stat-value {
     font-size: 1.8rem;
     font-weight: bold;
-    color: var(--primary-color);
+    color: var(--text-color);
     margin-bottom: 5px;
 }
 
@@ -311,7 +365,7 @@ footer {
 
 .task-summaries {
     margin-top: 30px;
-    background-color: white;
+    background-color: var(--secondary-color);
     border-radius: 10px;
     box-shadow: var(--box-shadow);
     padding: 25px;

@@ -8,122 +8,152 @@ createApp({
         const timerInterval = ref(null);
         const newTask = ref('');
         const timeEntries = ref([]);
-        
+        const startTime = ref(null);
+        const stopTime = ref(null);
+
         // Load entries from localStorage if available
         if (localStorage.getItem('timeEntries')) {
             timeEntries.value = JSON.parse(localStorage.getItem('timeEntries'));
         }
-        
+
         // Format the timer display
         const formattedTime = computed(() => {
             const hours = Math.floor(elapsedTime.value / 3600);
             const minutes = Math.floor((elapsedTime.value % 3600) / 60);
             const seconds = elapsedTime.value % 60;
-            
-            return [
-                hours.toString().padStart(2, '0'),
-                minutes.toString().padStart(2, '0'),
-                seconds.toString().padStart(2, '0')
-            ].join(':');
+
+            if (hours > 0) {
+                return [
+                    hours.toString(),
+                    minutes.toString().padStart(2, '0'),
+                    seconds.toString().padStart(2, '0')
+                ].join(':');
+            } else {
+                return [
+                    minutes.toString(),
+                    seconds.toString().padStart(2, '0')
+                ].join(':');
+            }
         });
-        
+
+        // Format times for display
+        const startTimeFormatted = computed(() => {
+            if (!startTime.value) return '';
+            return formatTimeOnly(startTime.value);
+        });
+
+        const stopTimeFormatted = computed(() => {
+            if (!stopTime.value) return '';
+            return formatTimeOnly(stopTime.value);
+        });
+
+        function formatTimeOnly(date) {
+            const d = new Date(date);
+            return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
         // Start or stop the timer
         function startStop() {
             if (isRunning.value) {
                 // Stop the timer
                 clearInterval(timerInterval.value);
                 isRunning.value = false;
+                stopTime.value = new Date();
             } else {
                 // Start the timer
                 isRunning.value = true;
+                startTime.value = new Date();
+                stopTime.value = null;
                 timerInterval.value = setInterval(() => {
                     elapsedTime.value++;
                 }, 1000);
             }
         }
-        
+
         // Reset the timer
         function reset() {
             if (!isRunning.value) {
                 elapsedTime.value = 0;
                 newTask.value = '';
+                startTime.value = null;
+                stopTime.value = null;
             }
         }
-        
+
         // Check if entry can be added
         const canAddEntry = computed(() => {
             return newTask.value.trim() !== '' && elapsedTime.value > 0;
         });
-        
+
         // Add a new time entry
         function addEntry() {
             if (!canAddEntry.value) return;
-            
+
             timeEntries.value.unshift({
                 task: newTask.value,
                 duration: elapsedTime.value,
                 date: new Date(),
                 editing: false
             });
-            
+
             // Save to localStorage
             saveEntries();
-            
+
             // Reset timer and task
             elapsedTime.value = 0;
             newTask.value = '';
         }
-        
+
         // Edit an entry
         function editEntry(index) {
             const entry = timeEntries.value[index];
             const hours = Math.floor(entry.duration / 3600);
             const minutes = Math.floor((entry.duration % 3600) / 60);
             const seconds = entry.duration % 60;
-            
+
             entry.editTask = entry.task;
             entry.editHours = hours;
             entry.editMinutes = minutes;
             entry.editSeconds = seconds;
             entry.editing = true;
         }
-        
+
         // Save edited entry
         function saveEdit(index) {
             const entry = timeEntries.value[index];
             const hours = parseInt(entry.editHours || 0);
             const minutes = parseInt(entry.editMinutes || 0);
             const seconds = parseInt(entry.editSeconds || 0);
-            
+
             entry.task = entry.editTask;
             entry.duration = hours * 3600 + minutes * 60 + seconds;
             entry.editing = false;
-            
+
             saveEntries();
         }
-        
+
         // Cancel editing
         function cancelEdit(index) {
             timeEntries.value[index].editing = false;
         }
-        
+
         // Delete an entry
         function deleteEntry(index) {
             timeEntries.value.splice(index, 1);
             saveEntries();
         }
-        
+
         // Save entries to localStorage
         function saveEntries() {
             localStorage.setItem('timeEntries', JSON.stringify(timeEntries.value));
         }
-        
+
         // Format duration for display
         function formatDuration(seconds) {
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const remainingSeconds = seconds % 60;
-            
+
             let result = '';
             if (hours > 0) {
                 result += `${hours}h `;
@@ -132,31 +162,31 @@ createApp({
                 result += `${minutes}m `;
             }
             result += `${remainingSeconds}s`;
-            
+
             return result;
         }
-        
+
         // Format date for display
         function formatDate(date) {
             return new Date(date).toLocaleString();
         }
-        
+
         // Calculate total time tracked
         const totalSeconds = computed(() => {
             return timeEntries.value.reduce((total, entry) => total + entry.duration, 0);
         });
-        
+
         const totalTimeFormatted = computed(() => {
             const hours = Math.floor(totalSeconds.value / 3600);
             const minutes = Math.floor((totalSeconds.value % 3600) / 60);
-            
+
             if (hours > 0) {
                 return `${hours}h ${minutes}m`;
             } else {
                 return `${minutes}m`;
             }
         });
-        
+
         // Compute unique previous tasks
         const uniquePreviousTasks = computed(() => {
             return [...new Set(timeEntries.value.map(entry => entry.task))];
@@ -176,7 +206,7 @@ createApp({
                     summaries[entry.task].count++;
                 }
             });
-            
+
             // Convert to array and sort by total time descending
             return Object.entries(summaries)
                 .map(([task, summary]) => ({
@@ -191,7 +221,7 @@ createApp({
         function formatTaskDuration(seconds) {
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
-            
+
             if (hours > 0) {
                 return `${hours}h ${minutes}m`;
             } else {
@@ -205,6 +235,10 @@ createApp({
             newTask,
             timeEntries,
             formattedTime,
+            startTime,
+            stopTime,
+            startTimeFormatted,
+            stopTimeFormatted,
             canAddEntry,
             totalTimeFormatted,
             uniquePreviousTasks,
